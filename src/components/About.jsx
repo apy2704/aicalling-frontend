@@ -2,7 +2,7 @@ import "../css/index.css";
 
 const Aboutproject = () => {
   return (
-    <div className="h-screen border-[0.1px] border-solid border-[#b6b3b3] box-border overflow-y-auto relative about-wrapper font-roboto">
+    <div className="h-full w-full border-[0.1px] border-solid border-[#b6b3b3] box-border overflow-y-auto relative about-wrapper font-roboto">
       <div className="max-w-[90%] mx-auto my-4 p-6 background-app leading-[1.6]">
         <h1 className="text-2xl mt-8 mb-4 text-[#feffff] align-center">
           Behind the Voice – The Making of Tanishk AI

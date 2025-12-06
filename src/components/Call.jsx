@@ -82,7 +82,7 @@ export const CallerTab = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen p-2 background-app border-app overflow-hidden">
+    <div className="flex flex-col justify-center items-center h-full w-full p-2 background-app border-app overflow-hidden">
       <img
         src={centrepic}
         alt="callpic"

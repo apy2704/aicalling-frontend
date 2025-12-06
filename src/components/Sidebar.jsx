@@ -4,6 +4,7 @@ import "../css/index.css";
 import { FaGithub } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { IoChatbubbleEllipses } from "react-icons/io5";
+import { IoCallSharp } from "react-icons/io5";
 import { FaLinkedin } from "react-icons/fa";
 import { BiLogoGmail } from "react-icons/bi";
 import { FaRobot } from "react-icons/fa6";
@@ -38,6 +39,16 @@ export const Sidebar = ({ isClosing, handleClose }) => {
               >
                 <IoChatbubbleEllipses />
                 Chat-with-AI
+              </Link>
+            </li>
+            <li className="flex items-center mt-[10px] font-roboto">
+              <Link
+                className="flex items-center gap-[7px] justify-start text-white decoration-none"
+                to="/calling"
+                onClick={handleClose}
+              >
+                <IoCallSharp />
+                Voice Call
               </Link>
             </li>
             <li className="flex items-center mt-[10px] font-roboto">

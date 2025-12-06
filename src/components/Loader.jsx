@@ -22,11 +22,20 @@ export const Loader = () => {
   }, []);
 
   useEffect(() => {
+    console.log("🔄 Loader: Starting navigation timer (3 seconds)");
     const timer = setTimeout(() => {
-      navigate("/callinginterface");
+      console.log("✅ Loader: Navigating to /callinginterface");
+      try {
+        navigate("/callinginterface");
+      } catch (error) {
+        console.error("❌ Loader: Navigation error:", error);
+      }
     }, 3000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      console.log("🧹 Loader: Cleaning up timer");
+      clearTimeout(timer);
+    };
   }, [navigate]);
   return (
     <>

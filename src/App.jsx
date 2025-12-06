@@ -36,8 +36,9 @@ function App() {
 }
 
 export const Layout = () => {
-  const [isSidebarOpen, setToggleSidebar] = useRecoilState(toggleAtomstate);
+  const [isSidebarOpen, setToggleSidebar] = useRecoilState(toggleAtomstate); //false
   const [isClosing, setIsClosing] = useState(false);
+
   const handleCloseWithAnimation = () => {
     setIsClosing(true);
   };
@@ -50,39 +51,38 @@ export const Layout = () => {
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [isClosing]);
+  }, [isClosing, setToggleSidebar]);
+
+  // Prevent body scroll when sidebar is open
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSidebarOpen]);
 
   return (
-    <div
-      className="   w-full 
-    min-w-[320px] 
-    max-w-full 
-    mx-auto 
-    h-screen 
-    overflow-hidden 
-    relative 
-    bg-[#0d131f]
-    md:max-w-lg
-    md:rounded-[15px]
-    md:border-[10px]
-    md:border-[#222]
-  shadow-purple
-   md:border-solid"
-    >
-      <div className="relative  h-screen overflow-y-auto app-container">
-        <div className="relative  z-[1001] h-15 background-app flex items-center justify-between border-app p-3 ">
+    <div className="w-full min-w-[320px] max-w-full mx-auto h-screen overflow-hidden relative bg-[#0d131f] md:max-w-lg md:rounded-[15px] md:border-[10px] md:border-[#222] shadow-purple md:border-solid">
+      <div className="flex flex-col h-full w-full relative">
+        {/* Fixed Header */}
+        <div className="relative z-[1001] flex-shrink-0 h-[60px] background-app flex items-center justify-between border-app border-b p-3">
           <div className="w-10 flex items-center justify-center">
             {!isSidebarOpen && (
               <button
-                className="bg-none border-none  text-2xl cursor-pointer"
+                className="bg-none border-none text-2xl cursor-pointer text-white hover:opacity-80 transition-opacity"
                 onClick={() => setToggleSidebar(true)}
+                aria-label="Open sidebar"
               >
                 <BsLayoutSidebar />
               </button>
             )}
           </div>
 
-          <p className="text-2xl  p-1.5 bg-[#3a3a3ab3] rounded-xl">
+          <p className="text-xl sm:text-2xl p-1.5 bg-[#3a3a3ab3] rounded-xl text-white">
             Tanishk AI
           </p>
 
@@ -92,11 +92,13 @@ export const Layout = () => {
                 className="w-full h-full object-cover rounded-full cursor-pointer"
                 src={tanupic}
                 alt="profilepic"
+                loading="lazy"
               />
             </div>
           </div>
         </div>
 
+        {/* Sidebar - Fixed position, doesn't scroll */}
         {isSidebarOpen && (
           <>
             <Sidebar
@@ -109,7 +111,11 @@ export const Layout = () => {
             ></div>
           </>
         )}
-        <Outlet />
+
+        {/* Content Area - Takes remaining height */}
+        <div className="flex-1 min-h-0 w-full relative overflow-hidden">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
