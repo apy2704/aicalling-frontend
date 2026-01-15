@@ -1,5 +1,5 @@
 import "./css/index.css";
-import tanupic from "./assets/tanuai.png";
+import tanupic from "./assets/tanishk.jpeg";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { BsLayoutSidebar } from "react-icons/bs";
 import { RecoilRoot, useRecoilState } from "recoil";
