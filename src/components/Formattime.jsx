@@ -1,17 +1,20 @@
 import { useRecoilValue } from "recoil";
 import { elapsedTimeAtom } from "../states/atoms";
 
-const FormattedTimer = () => {
+const FormatTime = () => {
   const elapsedTime = useRecoilValue(elapsedTimeAtom);
 
   const formatTime = (seconds) => {
-    const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0");
-    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
-    const secs = String(seconds % 60).padStart(2, "0");
-    return `${hrs}:${mins}:${secs}`;
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    const pad = (num) => String(num).padStart(2, "0");
+
+    return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
   };
 
   return <span>{formatTime(elapsedTime)}</span>;
 };
 
-export default FormattedTimer;
+export default FormatTime;

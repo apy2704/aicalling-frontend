@@ -7,7 +7,7 @@ const ThankYou = () => {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#0d131f] text-[#ffffff] text-center p-5 gap-2  border-[0.1px] border-solid border-[#b6b3b3] font-roboto ">
+      <div className="flex flex-col items-center justify-center h-full w-full bg-[#0d131f] text-[#ffffff] text-center p-5 gap-2 border-[0.1px] border-solid border-[#b6b3b3] font-roboto overflow-y-auto">
         <img
           src={thankyoupic}
           alt="Tanishk"

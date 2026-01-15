@@ -5,7 +5,7 @@ import Lottie from "lottie-react";
 
 import talkinginterface from "../assets/talkanimee.json";
 import { HiSpeakerWave } from "react-icons/hi2";
-import { MdCallEnd, MdErrorOutline } from "react-icons/md";
+import { MdCallEnd, MdErrorOutline, MdPause } from "react-icons/md";
 import { FaMicrophone } from "react-icons/fa6";
 import { RiSpeakFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,7 @@ const CallingInterface = () => {
   const [isGreeting, setIsGreeting] = useState(true);
   const [isspeakerOn, setSpeaker] = useState(false);
   const [isListening, setListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [userTranscript, setTranscript] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [responseFromAI, setResponse] = useState("");
@@ -33,11 +34,27 @@ const CallingInterface = () => {
   const navigate = useNavigate();
   const recognitionRef = useRef(null);
   const greetedRef = useRef(false);
+<<<<<<< HEAD
+=======
+  const currentUtteranceRef = useRef(null);
+>>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
 
   const resetElapsedTime = useResetRecoilState(elapsedTimeAtom);
   const API_URL = `${import.meta.env.VITE_EC2_URL}/chat`;
 
+<<<<<<< HEAD
   useEffect(() => {
+=======
+  const stopListening = () => {
+    recognitionRef.current?.stop?.();
+    setListening(false);
+  };
+
+  useEffect(() => {
+    console.log("🚀 Callinterface: Component mounted");
+
+    // Stop any existing speech and recognition
+>>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
     speechSynthesis.cancel();
     recognitionRef.current?.abort?.();
     recognitionRef.current = null;
@@ -46,20 +63,59 @@ const CallingInterface = () => {
     const greetAndStart = () => {
       const greeting =
         "Hi, I am Tanishk's AI. You can ask me anything about his portfolio. Tap the mic button below when you're ready to speak.";
+
       const greetSpeech = new SpeechSynthesisUtterance(greeting);
       greetSpeech.lang = "en-US";
+<<<<<<< HEAD
       greetSpeech.pitch = 1.9;
       greetSpeech.rate = 1;
+=======
+      greetSpeech.pitch = 1.0;
+      greetSpeech.rate = 1.8; // Faster speed (1.0 = normal, 1.6 = 60% faster)
+>>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
 
       setIsGreeting(true);
       setStatusMessage("Speaking...");
 
-      greetSpeech.onend = () => {
+      // Safety timeout - if speech doesn't complete in 10 seconds, proceed anyway
+      const safetyTimeout = setTimeout(() => {
+        console.warn("⚠️ Greeting speech timeout - proceeding anyway");
         setIsGreeting(false);
+        setIsSpeaking(false);
+        setStatusMessage("🎤 Tap to talk");
+      }, 10000);
+
+      greetSpeech.onstart = () => {
+        setIsSpeaking(true);
+      };
+
+      greetSpeech.onend = () => {
+        console.log("✅ Greeting speech completed");
+        clearTimeout(safetyTimeout);
+        setIsGreeting(false);
+        setIsSpeaking(false);
         setStatusMessage("🎤 Tap to talk");
       };
 
-      speechSynthesis.speak(greetSpeech);
+      greetSpeech.onerror = (error) => {
+        console.error("❌ Greeting speech error:", error);
+        clearTimeout(safetyTimeout);
+        setIsGreeting(false);
+        setIsSpeaking(false);
+        setStatusMessage("🎤 Tap to talk");
+      };
+
+      if (isDevelopment) {
+        console.log("🔊 Starting greeting speech");
+      }
+      try {
+        speechSynthesis.speak(greetSpeech);
+      } catch (error) {
+        console.error("❌ Error starting speech:", error);
+        clearTimeout(safetyTimeout);
+        setIsGreeting(false);
+        setStatusMessage("🎤 Tap to talk");
+      }
     };
 
     greetAndStart();
@@ -67,9 +123,14 @@ const CallingInterface = () => {
     return () => {
       speechSynthesis.cancel();
       stopListening();
+      stopSpeaking();
       resetElapsedTime();
     };
+<<<<<<< HEAD
   }, []);
+=======
+  }, [resetElapsedTime]);
+>>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
 
   const startListening = () => {
     if (!("webkitSpeechRecognition" in window)) {
@@ -104,14 +165,85 @@ const CallingInterface = () => {
       setListening(false);
       setLoading(true);
       setStatusMessage("Connecting to the backend...");
+<<<<<<< HEAD
+=======
+
+      // Log speech recognition result
+      const requestId = Date.now();
+      const timestamp = new Date().toISOString();
+      console.log("\n" + "=".repeat(80));
+      console.log(`🎤 [${timestamp}] SPEECH RECOGNITION RESULT #${requestId}`);
+      console.log("=".repeat(80));
+      console.log("💬 User Transcript:", userText);
+      console.log("📏 Transcript Length:", userText.length, "characters");
+      console.log("📊 Confidence:", event.results[0][0].confidence || "N/A");
+>>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
 
       try {
+        // Log API request
+        const apiStartTime = Date.now();
+        console.log("\n📤 [REQUEST #" + requestId + "] SENDING API REQUEST");
+        console.log("🌐 API URL:", API_URL);
+        console.log(
+          "📦 Request Payload:",
+          JSON.stringify({ userMessage: userText }, null, 2)
+        );
+        console.log("⏱️  Request Time:", new Date().toISOString());
+
         const res = await axios.post(API_URL, { userMessage: userText });
+
+        const apiEndTime = Date.now();
+        const apiDuration = apiEndTime - apiStartTime;
         const data = res.data;
-        setResponse(data.response);
+        const aiResponse = data.response;
+
+        // Log API response
+        console.log("\n✅ [REQUEST #" + requestId + "] API RESPONSE RECEIVED");
+        console.log("⏱️  API Duration:", apiDuration + "ms");
+        console.log("📊 Response Status:", res.status, res.statusText);
+        console.log(
+          "📦 Response Headers:",
+          JSON.stringify(res.headers, null, 2)
+        );
+        console.log("📦 Response Data:", JSON.stringify(data, null, 2));
+        console.log("🤖 AI Response Text:", aiResponse);
+        console.log("📏 Response Length:", aiResponse.length, "characters");
+        console.log("=".repeat(80) + "\n");
+
+        setResponse(aiResponse);
         setApiError(null);
-        speak(data.response);
+
+        // Use default Web Speech API to speak the Groq API response
+        console.log("🔊 Starting Text-to-Speech for AI response");
+        speak(aiResponse);
       } catch (err) {
+        // Log API error
+        console.error("\n" + "=".repeat(80));
+        console.error(
+          `❌ [${new Date().toISOString()}] API ERROR #${requestId}`
+        );
+        console.error("=".repeat(80));
+        console.error("🔴 Error Type:", err.constructor.name);
+        console.error("📝 Error Message:", err.message);
+
+        if (err.response) {
+          console.error("📡 Response Status:", err.response.status);
+          console.error(
+            "📡 Response Data:",
+            JSON.stringify(err.response.data, null, 2)
+          );
+          console.error(
+            "📡 Response Headers:",
+            JSON.stringify(err.response.headers, null, 2)
+          );
+        } else if (err.request) {
+          console.error("📡 Request Error:", err.request);
+          console.error("⚠️  No response received from server");
+        } else {
+          console.error("📡 Error Config:", err.config);
+        }
+        console.error("=".repeat(80) + "\n");
+
         setApiError(
           "Unable to connect to the backend. Please try again later."
         );
@@ -144,24 +276,49 @@ const CallingInterface = () => {
     recognition.start();
   };
 
-  const stopListening = () => {
-    recognitionRef.current?.stop?.();
+  const stopSpeaking = () => {
+    console.log("⏸️ Stopping speech");
+    speechSynthesis.cancel();
+    setIsSpeaking(false);
     setListening(false);
+    setStatusMessage("🎤 Tap to talk");
+    currentUtteranceRef.current = null;
   };
 
   const speak = (text) => {
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = "en-US";
+    utter.rate = 1.6; // Faster speed (1.0 = normal, 1.6 = 60% faster)
+    utter.pitch = 1.0; // Normal pitch
 
     setStatusMessage("🔊 Speaking...");
     setListening(true); // mic off during AI speech
+    setIsSpeaking(true);
+    currentUtteranceRef.current = utter;
+
+    utter.onstart = () => {
+      console.log("🔊 Speech started");
+      setIsSpeaking(true);
+    };
 
     utter.onend = () => {
+      console.log("✅ AI response speech completed");
+      setIsSpeaking(false);
       setListening(false);
       setStatusMessage("🎤 Tap to talk");
+      currentUtteranceRef.current = null;
+    };
+
+    utter.onerror = (error) => {
+      console.error("❌ Speech error:", error);
+      setIsSpeaking(false);
+      setListening(false);
+      setStatusMessage("🎤 Tap to talk");
+      currentUtteranceRef.current = null;
     };
 
     speechSynthesis.cancel(); // prevent double speaking
+    console.log("🔊 Speaking AI response");
     speechSynthesis.speak(utter);
   };
 
@@ -184,8 +341,8 @@ const CallingInterface = () => {
   }, [isspeakerOn]);
 
   return (
-    <div className="border-app flex justify-between items-center flex-col relative h-screen overflow-hidden">
-      <div className="flex flex-col items-center justify-center h-[90vh] p-[30px] background-app relative overflow-hidden">
+    <div className="border-app flex justify-between items-center flex-col relative h-full w-full overflow-hidden">
+      <div className="flex flex-col items-center justify-center flex-1 w-full p-[30px] background-app relative overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center w-2xs h-64 text-3xl text-[#c6cac9] font-bold p-[7px]">
             <p>🤖 Thinking...</p>
@@ -197,9 +354,9 @@ const CallingInterface = () => {
 
         <Timer />
         <div className="flex items-center p-1.5 text-[20px] mb-8">
-          <p className="font-medium p-1" id="timer">
+          <div className="font-medium p-1" id="timer">
             <FormatTime />
-          </p>
+          </div>
         </div>
 
         <div className="text-center text-sm text-[#9ca3af] font-medium mb-4">
@@ -215,31 +372,49 @@ const CallingInterface = () => {
           )}
 
           <div className="flex justify-around items-center gap-[50px] p-3">
-            <button
-              className="bg-[#0d131f] text-[#87cfd5] w-14 h-14 rounded-full flex items-center justify-center"
-              onClick={handleclick}
-            >
-              <HiSpeakerWave className="text-2xl" />
-            </button>
+            {/* Pause/Stop Speech Button - Shows when AI is speaking */}
+            {isSpeaking ? (
+              <button
+                className="bg-[#0d131f] text-[#ff6b6b] w-14 h-14 rounded-full flex items-center justify-center hover:bg-[#1a1a1f] transition-colors"
+                onClick={stopSpeaking}
+                title="Stop AI speech"
+              >
+                <MdPause className="text-2xl" />
+              </button>
+            ) : (
+              <button
+                className="bg-[#0d131f] text-[#87cfd5] w-14 h-14 rounded-full flex items-center justify-center"
+                onClick={handleclick}
+                title="Speaker info"
+              >
+                <HiSpeakerWave className="text-2xl" />
+              </button>
+            )}
 
             <button
               className="w-14 h-14"
-              onClick={() =>
+              onClick={() => {
+                speechSynthesis.cancel();
+                stopListening();
                 navigate("/thankyou", {
                   state: { time: document.querySelector("#timer").textContent },
-                })
-              }
+                });
+              }}
             >
               <MdCallEnd className="bg-[#e31e13] mt-5 text-white text-6xl rounded-full p-2" />
             </button>
 
             <button
-              disabled={isListening || isGreeting}
+              disabled={isListening || isGreeting || isSpeaking}
               onClick={() => {
-                if (!isListening && !isGreeting) startListening();
+                if (!isListening && !isGreeting && !isSpeaking) {
+                  startListening();
+                }
               }}
               className={`w-14 h-14 rounded-full flex items-center justify-center ${
-                isListening || isGreeting ? "opacity-50 cursor-not-allowed" : ""
+                isListening || isGreeting || isSpeaking
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
               }`}
             >
               {isListening ? (
