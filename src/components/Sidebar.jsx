@@ -8,6 +8,7 @@ import { IoCallSharp } from "react-icons/io5";
 import { FaLinkedin } from "react-icons/fa";
 import { BiLogoGmail } from "react-icons/bi";
 import { FaRobot } from "react-icons/fa6";
+import { HiDocumentText } from "react-icons/hi";
 
 export const Sidebar = ({ isClosing, handleClose }) => {
   return (
@@ -95,6 +96,18 @@ export const Sidebar = ({ isClosing, handleClose }) => {
                 <FaRobot />
                 Behind the AI
               </Link>
+            </li>
+            <li className="flex items-center mt-[10px] font-roboto">
+              <a
+                className="flex items-center gap-[7px] justify-start text-white decoration-none hover:text-blue-400 transition-colors"
+                href="/Tanishk_Khare_Resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleClose}
+              >
+                <HiDocumentText />
+                View Resume
+              </a>
             </li>
           </ul>
         </div>
