@@ -24,15 +24,9 @@
     box-shadow: 0 4px 20px rgba(0, 255, 200, 0.4);
   }
 
-<<<<<<< HEAD
-  .chat-ai {
-    background-color: #a6dbdb;
-    color: #213056;
-=======
   .app-container {
     overflow: hidden;
     height: 100%;
->>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
   }
 
   .app-container::-webkit-scrollbar {

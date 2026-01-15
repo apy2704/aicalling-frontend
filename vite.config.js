@@ -12,4 +12,18 @@ export default defineConfig({
   optimizeDeps: {
     include: ["react", "react-dom", "recoil"],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunks
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "recoil-vendor": ["recoil"],
+          "ui-vendor": ["lottie-react", "framer-motion", "react-icons"],
+          "http-vendor": ["axios"],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000, // Increase limit to 1000 kB
+  },
 });

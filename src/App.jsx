@@ -66,31 +66,10 @@ export const Layout = () => {
   }, [isSidebarOpen]);
 
   return (
-<<<<<<< HEAD
-    <div
-      className="   w-full 
-    min-w-[320px] 
-    max-w-full 
-    mx-auto 
-    h-screen 
-    overflow-hidden 
-    relative 
-    bg-[#0d131f]
-    md:max-w-lg
-    md:rounded-[15px]
-    md:border-[10px]
-    md:border-[#222]
-  shadow-purple
-   md:border-solid"
-    >
-      <div className="relative  h-svh overflow-y-auto app-container">
-        <div className="relative  z-[1001] h-15 background-app flex items-center justify-between border-app p-3 ">
-=======
     <div className="w-full min-w-[320px] max-w-full mx-auto h-screen overflow-hidden relative bg-[#0d131f] md:max-w-lg md:rounded-[15px] md:border-[10px] md:border-[#222] shadow-purple md:border-solid">
       <div className="flex flex-col h-full w-full relative">
         {/* Fixed Header */}
         <div className="relative z-[1001] flex-shrink-0 h-[60px] background-app flex items-center justify-between border-app border-b p-3">
->>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
           <div className="w-10 flex items-center justify-center">
             {!isSidebarOpen && (
               <button

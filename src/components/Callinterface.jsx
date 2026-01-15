@@ -34,27 +34,21 @@ const CallingInterface = () => {
   const navigate = useNavigate();
   const recognitionRef = useRef(null);
   const greetedRef = useRef(false);
-<<<<<<< HEAD
-=======
   const currentUtteranceRef = useRef(null);
->>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
 
   const resetElapsedTime = useResetRecoilState(elapsedTimeAtom);
   const API_URL = `${import.meta.env.VITE_EC2_URL}/chat`;
 
-<<<<<<< HEAD
-  useEffect(() => {
-=======
   const stopListening = () => {
     recognitionRef.current?.stop?.();
     setListening(false);
   };
 
   useEffect(() => {
+    const isDevelopment = import.meta.env.DEV;
     console.log("🚀 Callinterface: Component mounted");
 
     // Stop any existing speech and recognition
->>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
     speechSynthesis.cancel();
     recognitionRef.current?.abort?.();
     recognitionRef.current = null;
@@ -66,13 +60,8 @@ const CallingInterface = () => {
 
       const greetSpeech = new SpeechSynthesisUtterance(greeting);
       greetSpeech.lang = "en-US";
-<<<<<<< HEAD
-      greetSpeech.pitch = 1.9;
-      greetSpeech.rate = 1;
-=======
       greetSpeech.pitch = 1.0;
       greetSpeech.rate = 1.8; // Faster speed (1.0 = normal, 1.6 = 60% faster)
->>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
 
       setIsGreeting(true);
       setStatusMessage("Speaking...");
@@ -126,11 +115,7 @@ const CallingInterface = () => {
       stopSpeaking();
       resetElapsedTime();
     };
-<<<<<<< HEAD
-  }, []);
-=======
   }, [resetElapsedTime]);
->>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
 
   const startListening = () => {
     if (!("webkitSpeechRecognition" in window)) {
@@ -165,8 +150,6 @@ const CallingInterface = () => {
       setListening(false);
       setLoading(true);
       setStatusMessage("Connecting to the backend...");
-<<<<<<< HEAD
-=======
 
       // Log speech recognition result
       const requestId = Date.now();
@@ -177,7 +160,6 @@ const CallingInterface = () => {
       console.log("💬 User Transcript:", userText);
       console.log("📏 Transcript Length:", userText.length, "characters");
       console.log("📊 Confidence:", event.results[0][0].confidence || "N/A");
->>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
 
       try {
         // Log API request

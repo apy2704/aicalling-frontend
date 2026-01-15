@@ -2,11 +2,7 @@ import "../css/index.css";
 
 const Aboutproject = () => {
   return (
-<<<<<<< HEAD
-    <div className="h-full border-[0.1px] border-solid border-[#b6b3b3] box-border overflow-y-auto relative about-wrapper font-roboto">
-=======
     <div className="h-full w-full border-[0.1px] border-solid border-[#b6b3b3] box-border overflow-y-auto relative about-wrapper font-roboto">
->>>>>>> 4e4da9a1cd87ea15529a6ba42c4f059fb6cf1ed4
       <div className="max-w-[90%] mx-auto my-4 p-6 background-app leading-[1.6]">
         <h1 className="text-2xl mt-8 mb-4 text-[#feffff] align-center">
           Behind the Voice – The Making of Tanishk AI
