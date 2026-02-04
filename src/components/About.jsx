@@ -5,12 +5,12 @@ const Aboutproject = () => {
     <div className="h-full w-full border-[0.1px] border-solid border-[#b6b3b3] box-border overflow-y-auto relative about-wrapper font-roboto">
       <div className="max-w-[90%] mx-auto my-4 p-6 background-app leading-[1.6]">
         <h1 className="text-2xl mt-8 mb-4 text-[#feffff] align-center">
-          Behind the Voice – The Making of Tanishk AI
+          Behind the Voice – The Making of Abhay AI
         </h1>
 
         <p className="mb-4 text-base text-[#eceef0]">
           This project is more than just a portfolio — it's a deeply personal
-          innovation where voice meets intelligence. "Tanishk AI" is a
+          innovation where voice meets intelligence. "Abhay AI" is a
           voice-based portfolio assistant that simulates a real-time AI
           conversation, making your experience with my work interactive and
           futuristic.
@@ -21,7 +21,7 @@ const Aboutproject = () => {
         </h2>
         <p className="mb-4 text-base text-[#eceef0]">
           At its core, this project is a React-based portfolio website enhanced
-          with a voice-calling AI interface. Users can talk to "Tanishk's AI,"
+          with a voice-calling AI interface. Users can talk to "Abhay's AI,"
           ask questions about me, my work, or anything defined in my backend
           JSON data, and receive real-time spoken responses. This makes browsing
           my portfolio not only engaging but also immersive and smart.
@@ -119,11 +119,10 @@ const Aboutproject = () => {
           <br />
           <a
             className="text-[#74e8c1] hover:underline"
-            href="https://github.com/kharetanishk/tanishk-calling-ai"
+            href="https://github.com/apy2704"
             target="_blank"
             rel="noopener noreferrer"
-          >
-            github.com/kharetanishk/tanishk-calling-ai
+          > 
           </a>
         </p>
 
@@ -133,12 +132,12 @@ const Aboutproject = () => {
           to contact me at:
           <br />
           <span className="mt-1 text-base">
-            <b>Phone:</b> <b className=" text-[#bd9f9f]">6260440241</b>
+            <b>Phone:</b> <b className=" text-[#bd9f9f]">9109494819</b>
           </span>
         </p>
       </div>
       <div className="relative p-4 bottom-5 w-full text-[0.8rem] text-[#aaa]">
-        © 2025 Tanishk Khare—Made with ❤️
+        © 2026 Abhay Pratap Yadav —Made with ❤️
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import centrepic from "../assets/callpic.jpg";
+import centrepic from "../assets/callpic.png";
 import "../css/index.css";
 import { IoCallSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";

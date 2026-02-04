@@ -204,10 +204,10 @@ const Chatinterface = () => {
               />
             </div>
             <h2 className="text-xl sm:text-2xl font-semibold mb-2 text-gray-300">
-              Welcome to Tanishk AI
+              Welcome to Abhay's AI
             </h2>
             <p className="text-sm sm:text-base text-gray-400 max-w-md">
-              Ask me anything about Tanishk's portfolio and projects!
+              Ask me anything about Abhay's portfolio and projects!
             </p>
           </div>
         )}

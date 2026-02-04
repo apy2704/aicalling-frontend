@@ -56,7 +56,7 @@ const CallingInterface = () => {
 
     const greetAndStart = () => {
       const greeting =
-        "Hi, I am Tanishk's AI. You can ask me anything about his portfolio. Tap the mic button below when you're ready to speak.";
+        "Hi, I am Abhay's AI. You can ask me anything about his portfolio. Tap the mic button below when you're ready to speak.";
 
       const greetSpeech = new SpeechSynthesisUtterance(greeting);
       greetSpeech.lang = "en-US";

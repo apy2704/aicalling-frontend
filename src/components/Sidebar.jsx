@@ -55,7 +55,7 @@ export const Sidebar = ({ isClosing, handleClose }) => {
             <li className="flex items-center mt-[10px] font-roboto">
               <a
                 className="flex items-center gap-[7px] justify-start text-white decoration-none"
-                href="https://github.com/kharetanishk"
+                href="https://github.com/apy2704"
                 target="_blank"
                 onClick={handleClose}
                 rel="noopener noreferrer"
@@ -67,7 +67,7 @@ export const Sidebar = ({ isClosing, handleClose }) => {
             <li className="flex items-center mt-[10px] font-roboto">
               <a
                 className="flex items-center gap-[7px] justify-start text-white decoration-none"
-                href="https://www.linkedin.com/in/tanishk-khare-91290930a/"
+                href="https://www.linkedin.com/in/apy2704/"
                 target="_blank"
                 onClick={handleClose}
                 rel="noopener noreferrer"
@@ -79,7 +79,7 @@ export const Sidebar = ({ isClosing, handleClose }) => {
             <li className="flex items-center mt-[10px] font-roboto">
               <a
                 className="flex items-center gap-[7px] justify-start text-white decoration-none"
-                href="mailto:tanishk16012004@gmail.com"
+                href="mailto:abhyadav2704@gmail.com"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -100,7 +100,7 @@ export const Sidebar = ({ isClosing, handleClose }) => {
             <li className="flex items-center mt-[10px] font-roboto">
               <a
                 className="flex items-center gap-[7px] justify-start text-white decoration-none hover:text-blue-400 transition-colors"
-                href="/Tanishk_Khare_Resume.pdf"
+                href="/abhay_ai.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleClose}
@@ -113,7 +113,7 @@ export const Sidebar = ({ isClosing, handleClose }) => {
         </div>
       </div>
       <div className="absolute bottom-8 w-full text-[0.7rem] text-[#aaa]">
-        © 2025 Tanishk Khare—Made with ❤️
+        © 2026 Abhay Pratap Yadav—Made with ❤️
       </div>
     </div>
   );

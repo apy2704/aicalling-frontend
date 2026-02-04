@@ -1,5 +1,5 @@
 import "./css/index.css";
-import tanupic from "./assets/tanishk.jpeg";
+import tanupic from "./assets/abhay.jpeg";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { BsLayoutSidebar } from "react-icons/bs";
 import { RecoilRoot, useRecoilState } from "recoil";
@@ -98,8 +98,8 @@ export const Layout = () => {
           <button
             onClick={() => {
               const link = document.createElement("a");
-              link.href = "/Tanishk_Khare_Resume.pdf";
-              link.download = "Tanishk_Khare_Resume.pdf";
+              link.href = "/abhay_ai.pdf";
+              link.download = "abhay_ai.pdf";
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
@@ -107,7 +107,7 @@ export const Layout = () => {
             className="text-xl sm:text-2xl p-1.5 bg-[#3a3a3ab3] rounded-xl text-white hover:bg-[#4a4a4ab3] hover:text-blue-400 transition-all cursor-pointer"
             aria-label="Download Resume"
           >
-            Tanishk AI
+            Abhay AI
           </button>
 
           <div className="w-10 flex items-center justify-center">

@@ -41,7 +41,7 @@ export const Loader = () => {
     <>
       <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center gap-1.5 font-bold font-roboto background-app z-[1000] pb-[90px]">
         <div className="spinner" />
-        <p>Connecting to Tanishk’s AI...</p>
+        <p>Connecting to Abhay’s AI...</p>
       </div>
     </>
   );
