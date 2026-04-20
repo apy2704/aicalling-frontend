@@ -4,6 +4,7 @@ import axios from "axios";
 import Lottie from "lottie-react";
 
 import talkinginterface from "../assets/talkanimee.json";
+import avatar1 from "@/assets/avtaraicalling.jpeg";
 import { HiSpeakerWave } from "react-icons/hi2";
 import { MdCallEnd, MdErrorOutline, MdPause } from "react-icons/md";
 import { FaMicrophone } from "react-icons/fa6";
@@ -331,7 +332,11 @@ const CallingInterface = () => {
             <span className="spinner"></span>
           </div>
         ) : (
-          <MemoizedLottie animationData={talkinginterface} />
+          <img
+            src={avatar1}
+            alt="AI avatar"
+            className="w-72 max-h-80 object-contain"
+          />
         )}
 
         <Timer />

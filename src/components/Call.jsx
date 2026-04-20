@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import centrepic from "../assets/callpic.png";
+import avatar2 from "@/assets/avtaraicalling2.jpeg";
 import "../css/index.css";
 import { IoCallSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { micPermissionAtom } from "../states/atoms";
 import { motion, AnimatePresence } from "framer-motion";
+import { GradientBackground } from "./ui/gradient-background-4";
 
 const CallingApp = () => {
   return <CallerTab />;
@@ -82,9 +83,10 @@ export const CallerTab = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-full w-full p-2 background-app border-app overflow-hidden">
+    <div className="relative flex flex-col justify-center items-center h-full w-full p-2 background-app border-app overflow-hidden">
+      <GradientBackground />
       <img
-        src={centrepic}
+        src={avatar2}
         alt="callpic"
         className="border-none max-w-[300px] overflow-hidden relative -top-7"
       />
