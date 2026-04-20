@@ -120,143 +120,165 @@ const CallingInterface = () => {
 
   const startListening = () => {
     if (!("webkitSpeechRecognition" in window)) {
-      alert(
-        "Your browser does not support speech recognition. Please use Chrome."
-      );
+      setStatusMessage("❌ Browser not supported. Please use Chrome.");
       return;
     }
 
-    const recognition = new window.webkitSpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    // Step 1: Guard with mic permission check
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(() => {
+        const recognition = new window.webkitSpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
 
-    let micTimeout;
+        let micTimeout;
+        let manualStop = false;
 
-    recognition.onstart = () => {
-      setListening(true);
-      setStatusMessage("🎧 Listening...");
-      micTimeout = setTimeout(() => {
-        recognition.stop();
-        setListening(false);
-        setStatusMessage("Mic timed out. Tap to talk again.");
-      }, 7000);
-    };
+        recognition.onstart = () => {
+          setListening(true);
+          setStatusMessage("🎧 Listening...");
+          micTimeout = setTimeout(() => {
+            manualStop = true;
+            recognition.stop();
+            setListening(false);
+            setStatusMessage("Mic timed out. Tap to talk again.");
+          }, 7000);
+        };
 
-    recognition.onresult = async (event) => {
-      clearTimeout(micTimeout);
-      const userText = event.results[0][0].transcript;
-      setTranscript(userText);
-      recognition.stop();
-      setListening(false);
-      setLoading(true);
-      setStatusMessage("Connecting to the backend...");
+        recognition.onresult = async (event) => {
+          clearTimeout(micTimeout);
+          manualStop = true;
+          const userText = event.results[0][0].transcript;
+          setTranscript(userText);
+          recognition.stop();
+          setListening(false);
+          setLoading(true);
+          setStatusMessage("Connecting to the backend...");
 
-      // Log speech recognition result
-      const requestId = Date.now();
-      const timestamp = new Date().toISOString();
-      console.log("\n" + "=".repeat(80));
-      console.log(`🎤 [${timestamp}] SPEECH RECOGNITION RESULT #${requestId}`);
-      console.log("=".repeat(80));
-      console.log("💬 User Transcript:", userText);
-      console.log("📏 Transcript Length:", userText.length, "characters");
-      console.log("📊 Confidence:", event.results[0][0].confidence || "N/A");
+          // Log speech recognition result
+          const requestId = Date.now();
+          const timestamp = new Date().toISOString();
+          console.log("\n" + "=".repeat(80));
+          console.log(`🎤 [${timestamp}] SPEECH RECOGNITION RESULT #${requestId}`);
+          console.log("=".repeat(80));
+          console.log("💬 User Transcript:", userText);
+          console.log("📏 Transcript Length:", userText.length, "characters");
+          console.log("📊 Confidence:", event.results[0][0].confidence || "N/A");
 
-      try {
-        // Log API request
-        const apiStartTime = Date.now();
-        console.log("\n📤 [REQUEST #" + requestId + "] SENDING API REQUEST");
-        console.log("🌐 API URL:", API_URL);
-        console.log(
-          "📦 Request Payload:",
-          JSON.stringify({ userMessage: userText }, null, 2)
-        );
-        console.log("⏱️  Request Time:", new Date().toISOString());
+          try {
+            // Log API request
+            const apiStartTime = Date.now();
+            console.log("\n📤 [REQUEST #" + requestId + "] SENDING API REQUEST");
+            console.log("🌐 API URL:", API_URL);
+            console.log(
+              "📦 Request Payload:",
+              JSON.stringify({ userMessage: userText }, null, 2)
+            );
+            console.log("⏱️  Request Time:", new Date().toISOString());
 
-        const res = await axios.post(API_URL, { userMessage: userText });
+            const res = await axios.post(API_URL, { userMessage: userText });
 
-        const apiEndTime = Date.now();
-        const apiDuration = apiEndTime - apiStartTime;
-        const data = res.data;
-        const aiResponse = data.response;
+            const apiEndTime = Date.now();
+            const apiDuration = apiEndTime - apiStartTime;
+            const data = res.data;
+            const aiResponse = data.response;
 
-        // Log API response
-        console.log("\n✅ [REQUEST #" + requestId + "] API RESPONSE RECEIVED");
-        console.log("⏱️  API Duration:", apiDuration + "ms");
-        console.log("📊 Response Status:", res.status, res.statusText);
-        console.log(
-          "📦 Response Headers:",
-          JSON.stringify(res.headers, null, 2)
-        );
-        console.log("📦 Response Data:", JSON.stringify(data, null, 2));
-        console.log("🤖 AI Response Text:", aiResponse);
-        console.log("📏 Response Length:", aiResponse.length, "characters");
-        console.log("=".repeat(80) + "\n");
+            // Log API response
+            console.log("\n✅ [REQUEST #" + requestId + "] API RESPONSE RECEIVED");
+            console.log("⏱️  API Duration:", apiDuration + "ms");
+            console.log("📊 Response Status:", res.status, res.statusText);
+            console.log(
+              "📦 Response Headers:",
+              JSON.stringify(res.headers, null, 2)
+            );
+            console.log("📦 Response Data:", JSON.stringify(data, null, 2));
+            console.log("🤖 AI Response Text:", aiResponse);
+            console.log("📏 Response Length:", aiResponse.length, "characters");
+            console.log("=".repeat(80) + "\n");
 
-        setResponse(aiResponse);
-        setApiError(null);
+            setResponse(aiResponse);
+            setApiError(null);
 
-        // Use default Web Speech API to speak the Groq API response
-        console.log("🔊 Starting Text-to-Speech for AI response");
-        speak(aiResponse);
-      } catch (err) {
-        // Log API error
-        console.error("\n" + "=".repeat(80));
-        console.error(
-          `❌ [${new Date().toISOString()}] API ERROR #${requestId}`
-        );
-        console.error("=".repeat(80));
-        console.error("🔴 Error Type:", err.constructor.name);
-        console.error("📝 Error Message:", err.message);
+            // Use default Web Speech API to speak the Groq API response
+            console.log("🔊 Starting Text-to-Speech for AI response");
+            speak(aiResponse);
+          } catch (err) {
+            // Log API error
+            console.error("\n" + "=".repeat(80));
+            console.error(
+              `❌ [${new Date().toISOString()}] API ERROR #${requestId}`
+            );
+            console.error("=".repeat(80));
+            console.error("🔴 Error Type:", err.constructor.name);
+            console.error("📝 Error Message:", err.message);
 
-        if (err.response) {
-          console.error("📡 Response Status:", err.response.status);
-          console.error(
-            "📡 Response Data:",
-            JSON.stringify(err.response.data, null, 2)
-          );
-          console.error(
-            "📡 Response Headers:",
-            JSON.stringify(err.response.headers, null, 2)
-          );
-        } else if (err.request) {
-          console.error("📡 Request Error:", err.request);
-          console.error("⚠️  No response received from server");
-        } else {
-          console.error("📡 Error Config:", err.config);
-        }
-        console.error("=".repeat(80) + "\n");
+            if (err.response) {
+              console.error("📡 Response Status:", err.response.status);
+              console.error(
+                "📡 Response Data:",
+                JSON.stringify(err.response.data, null, 2)
+              );
+              console.error(
+                "📡 Response Headers:",
+                JSON.stringify(err.response.headers, null, 2)
+              );
+            } else if (err.request) {
+              console.error("📡 Request Error:", err.request);
+              console.error("⚠️  No response received from server");
+            } else {
+              console.error("📡 Error Config:", err.config);
+            }
+            console.error("=".repeat(80) + "\n");
 
-        setApiError(
-          "Unable to connect to the backend. Please try again later."
-        );
-        setResponse("Something went wrong while fetching the response.");
-        setStatusMessage("⚠️ Failed to fetch response");
-      }
+            setApiError(
+              "Unable to connect to the backend. Please try again later."
+            );
+            setResponse("Something went wrong while fetching the response.");
+            setStatusMessage("⚠️ Failed to fetch response");
+          }
 
-      setLoading(false);
-    };
+          setLoading(false);
+        };
 
-    recognition.onerror = (event) => {
-      clearTimeout(micTimeout);
-      setListening(false);
-      if (event.error === "not-allowed") {
-        alert("Microphone access was denied.");
-        navigate("/");
-      } else if (event.error === "no-speech") {
-        setStatusMessage("I didn’t hear anything. Try again.");
-      } else {
-        setStatusMessage("Mic error. Try again.");
-      }
-    };
+        // Step 2: Improved error handling
+        recognition.onerror = (event) => {
+          clearTimeout(micTimeout);
+          setListening(false);
+          if (event.error === "not-allowed") {
+            setStatusMessage("Mic access denied. Please allow microphone.");
+          } else if (event.error === "no-speech") {
+            setStatusMessage("No speech detected. Tap mic to try again.");
+          } else if (event.error === "network") {
+            setStatusMessage("Network error. Check your internet connection.");
+          } else {
+            setStatusMessage("Voice error. Tap mic to try again.");
+          }
+        };
 
-    recognition.onend = () => {
-      clearTimeout(micTimeout);
-      setListening(false);
-    };
+        recognition.onend = () => {
+          clearTimeout(micTimeout);
+          if (!manualStop) {
+            // Restart recognition automatically if not manually stopped
+            try {
+              recognition.start();
+            } catch (e) {
+              console.warn("Could not restart recognition:", e);
+              setListening(false);
+            }
+          } else {
+            setListening(false);
+          }
+        };
 
-    recognitionRef.current = recognition;
-    recognition.start();
+        recognitionRef.current = recognition;
+        recognition.start();
+      })
+      .catch((err) => {
+        console.error("Mic error:", err);
+        setStatusMessage("Microphone access denied. Please allow mic permission.");
+      });
   };
 
   const stopSpeaking = () => {
@@ -269,10 +291,13 @@ const CallingInterface = () => {
   };
 
   const speak = (text) => {
+    // Step 3: Cancel any ongoing speech first
+    window.speechSynthesis.cancel();
+
     const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = "en-US";
-    utter.rate = 1.6; // Faster speed (1.0 = normal, 1.6 = 60% faster)
-    utter.pitch = 1.0; // Normal pitch
+    utter.lang = "en-IN";
+    utter.rate = 1;
+    utter.pitch = 1;
 
     setStatusMessage("🔊 Speaking...");
     setListening(true); // mic off during AI speech
@@ -292,17 +317,16 @@ const CallingInterface = () => {
       currentUtteranceRef.current = null;
     };
 
-    utter.onerror = (error) => {
-      console.error("❌ Speech error:", error);
+    utter.onerror = (e) => {
+      console.error("Speech error:", e);
       setIsSpeaking(false);
       setListening(false);
       setStatusMessage("🎤 Tap to talk");
       currentUtteranceRef.current = null;
     };
 
-    speechSynthesis.cancel(); // prevent double speaking
     console.log("🔊 Speaking AI response");
-    speechSynthesis.speak(utter);
+    window.speechSynthesis.speak(utter);
   };
 
   const handleclick = () => {
@@ -324,7 +348,7 @@ const CallingInterface = () => {
   }, [isspeakerOn]);
 
   return (
-    <div className="border-app flex justify-between items-center flex-col relative h-full w-full overflow-hidden">
+    <div className="relative flex flex-col justify-between items-center min-h-screen w-full max-w-md mx-auto overflow-hidden border-app">
       <div className="flex flex-col items-center justify-center flex-1 w-full p-[30px] background-app relative overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center w-2xs h-64 text-3xl text-[#c6cac9] font-bold p-[7px]">

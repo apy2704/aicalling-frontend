@@ -83,7 +83,7 @@ export const CallerTab = () => {
   };
 
   return (
-    <div className="relative flex flex-col justify-center items-center h-full w-full p-2 background-app border-app overflow-hidden">
+    <div className="relative flex flex-col justify-center items-center min-h-screen w-full max-w-md mx-auto p-2 background-app border-app overflow-hidden">
       <GradientBackground />
       <img
         src={avatar2}
