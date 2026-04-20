@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import avatar2 from "@/assets/avtaraicalling2.jpeg";
+import avatar2 from "@/assets/thankyourobot.jpeg";
 import "../css/index.css";
 import { IoCallSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";

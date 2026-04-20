@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import avatar1 from "@/assets/avtaraicalling2.jpeg";
+import avatar1 from "@/assets/thankyourobot.jpeg";
 
 const ThankYou = () => {
   const location = useLocation();
