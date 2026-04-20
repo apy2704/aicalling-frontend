@@ -190,7 +190,9 @@ const Chatinterface = () => {
   }, [userMessage, API_URL]);
 
   return (
-    <div className="flex flex-col h-full w-full relative bg-[#0f0f0f] overflow-hidden">
+    <div className="min-h-screen w-full flex justify-center items-center bg-[#0a0f1e]">
+      <div className="relative w-full max-w-[448px] min-h-screen flex flex-col overflow-hidden bg-[#0d131f]">
+    <div className="flex flex-col h-full w-full relative bg-[#0f0f0f] overflow-hidden flex-1">
       {/* CHAT WINDOW */}
       <div className="flex-1 min-h-0 overflow-y-auto px-2 sm:px-3 md:px-4 py-3 sm:py-4 bg-[#0f0f0f] text-white scroll-smooth">
         {messages.length === 0 && (
@@ -319,6 +321,8 @@ const Chatinterface = () => {
           </button>
         </div>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

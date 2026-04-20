@@ -37,12 +37,15 @@ export const Loader = () => {
       clearTimeout(timer);
     };
   }, [navigate]);
+
   return (
-    <>
-      <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center gap-1.5 font-bold font-roboto background-app z-[1000] pb-[90px]">
-        <div className="spinner" />
-        <p>Connecting to Abhay’s AI...</p>
+    <div className="min-h-screen w-full flex justify-center items-center bg-[#0a0f1e]">
+      <div className="relative w-full max-w-[448px] min-h-screen flex flex-col overflow-hidden bg-[#0d131f]">
+        <div className="flex-1 flex flex-col justify-center items-center gap-1.5 font-bold font-roboto background-app pb-[90px]">
+          <div className="spinner" />
+          <p>Connecting to Abhay's AI...</p>
+        </div>
       </div>
-    </>
+    </div>
   );
 };

@@ -83,7 +83,8 @@ export const CallerTab = () => {
   };
 
   return (
-    <div className="relative flex flex-col justify-center items-center min-h-screen w-full max-w-md mx-auto p-2 background-app border-app overflow-hidden">
+    <div className="min-h-screen w-full flex justify-center items-center bg-[#0a0f1e]">
+      <div className="relative w-full max-w-[448px] min-h-screen flex flex-col justify-center items-center p-2 background-app border-app overflow-hidden">
       <GradientBackground />
       <img
         src={avatar2}
@@ -132,6 +133,7 @@ export const CallerTab = () => {
           )}
         </AnimatePresence>
       </div>
+    </div>
     </div>
   );
 };
