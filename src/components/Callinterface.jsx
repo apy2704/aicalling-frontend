@@ -31,13 +31,20 @@ const CallingInterface = () => {
   const resetElapsedTime = useResetRecoilState(elapsedTimeAtom);
   const API_URL = `${import.meta.env.VITE_EC2_URL}/chat`;
 
+  // Unlock TTS on mobile with a silent utterance on first tap
+  const unlockTTS = () => {
+    const unlock = new SpeechSynthesisUtterance("");
+    unlock.volume = 0;
+    window.speechSynthesis.speak(unlock);
+  };
+
   const stopListening = () => {
     window.manualStop = true;
     recognitionRef.current?.stop?.();
     setListening(false);
   };
 
-  // PART 4 — Mic permission on page load + greeting
+  // PART 4 — Mic permission on page load (no auto-start for mobile autoplay policy)
   useEffect(() => {
     console.log("🚀 Callinterface: Component mounted");
 
@@ -46,62 +53,12 @@ const CallingInterface = () => {
     recognitionRef.current?.abort?.();
     recognitionRef.current = null;
 
-    const greetAndStart = () => {
-      const greeting =
-        "Hi, I am Abhay's AI. You can ask me anything about his portfolio. Tap the mic button below when you're ready to speak.";
-
-      window.speechSynthesis.cancel();
-      const greetSpeech = new SpeechSynthesisUtterance(greeting);
-      greetSpeech.lang = "en-IN";
-      greetSpeech.pitch = 1;
-      greetSpeech.rate = 0.95;
-
-      setIsGreeting(true);
-      setStatusMessage("Speaking...");
-
-      // Safety timeout - if speech doesn't complete in 10 seconds, proceed anyway
-      const safetyTimeout = setTimeout(() => {
-        console.warn("⚠️ Greeting speech timeout - proceeding anyway");
-        setIsGreeting(false);
-        setIsSpeaking(false);
-        setStatusMessage("🎤 Tap to talk");
-      }, 10000);
-
-      greetSpeech.onstart = () => {
-        setIsSpeaking(true);
-      };
-
-      greetSpeech.onend = () => {
-        console.log("✅ Greeting speech completed");
-        clearTimeout(safetyTimeout);
-        setIsGreeting(false);
-        setIsSpeaking(false);
-        setStatusMessage("🎤 Tap to talk");
-      };
-
-      greetSpeech.onerror = (error) => {
-        console.error("❌ Greeting speech error:", error);
-        clearTimeout(safetyTimeout);
-        setIsGreeting(false);
-        setIsSpeaking(false);
-        setStatusMessage("🎤 Tap to talk");
-      };
-
-      try {
-        window.speechSynthesis.speak(greetSpeech);
-      } catch (error) {
-        console.error("❌ Error starting speech:", error);
-        clearTimeout(safetyTimeout);
-        setIsGreeting(false);
-        setStatusMessage("🎤 Tap to talk");
-      }
-    };
-
-    // Request mic permission on mount, then greet
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then(() => {
-        greetAndStart();
+        setIsGreeting(false);
+        setStatusMessage("Tap mic to start speaking.");
+        // DO NOT auto-start listening here on mobile
       })
       .catch(() => {
         setStatusMessage(
@@ -217,62 +174,83 @@ const CallingInterface = () => {
     currentUtteranceRef.current = null;
   };
 
-  // PART 3 — Speech Synthesis with Chrome 15-second fix
+  // PART 3 — Speech Synthesis with mobile voice loading + Chrome 15-second fix
   const speakResponse = (text) => {
     try {
       window.speechSynthesis.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "en-IN";
-      utterance.rate = 0.95;
-      utterance.pitch = 1;
-      utterance.volume = 1;
+      const speak = () => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-IN";
+        utterance.rate = 0.95;
+        utterance.pitch = 1;
+        utterance.volume = 1;
 
-      setStatusMessage("🔊 Speaking...");
-      setListening(true); // mic off during AI speech
-      setIsSpeaking(true);
-      currentUtteranceRef.current = utterance;
+        // Pick best available voice
+        const voices = window.speechSynthesis.getVoices();
+        const preferred =
+          voices.find((v) => v.lang.includes("en") && v.localService === true) ||
+          voices.find((v) => v.lang.includes("en")) ||
+          voices[0];
+        if (preferred) utterance.voice = preferred;
 
-      // Fix Chrome bug where speech stops after 15 seconds
-      const resumeInfinity = setInterval(() => {
-        if (!window.speechSynthesis.speaking) {
-          clearInterval(resumeInfinity);
-        } else {
-          window.speechSynthesis.pause();
-          window.speechSynthesis.resume();
-        }
-      }, 10000);
-      resumeIntervalRef.current = resumeInfinity;
-
-      utterance.onstart = () => {
-        console.log("🔊 Speech started");
+        setStatusMessage("🔊 Speaking...");
+        setListening(true); // mic off during AI speech
         setIsSpeaking(true);
+        currentUtteranceRef.current = utterance;
+
+        // Chrome mobile 15 second bug fix
+        const resumeInfinity = setInterval(() => {
+          if (!window.speechSynthesis.speaking) {
+            clearInterval(resumeInfinity);
+          } else {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+          }
+        }, 10000);
+        resumeIntervalRef.current = resumeInfinity;
+
+        utterance.onstart = () => {
+          console.log("🔊 Speech started");
+          setIsSpeaking(true);
+        };
+
+        utterance.onend = () => {
+          console.log("✅ AI response speech completed");
+          clearInterval(resumeInfinity);
+          resumeIntervalRef.current = null;
+          setIsSpeaking(false);
+          setListening(false);
+          setStatusMessage("Tap mic to speak.");
+          currentUtteranceRef.current = null;
+          startListening();
+        };
+
+        utterance.onerror = (e) => {
+          clearInterval(resumeInfinity);
+          resumeIntervalRef.current = null;
+          console.error("Speech error:", e);
+          setIsSpeaking(false);
+          setListening(false);
+          setStatusMessage("Tap mic to continue.");
+          currentUtteranceRef.current = null;
+        };
+
+        console.log("🔊 Speaking AI response");
+        window.speechSynthesis.speak(utterance);
       };
 
-      utterance.onend = () => {
-        console.log("✅ AI response speech completed");
-        clearInterval(resumeInfinity);
-        resumeIntervalRef.current = null;
-        setIsSpeaking(false);
-        setListening(false);
-        setStatusMessage("🎤 Tap to talk");
-        currentUtteranceRef.current = null;
-      };
-
-      utterance.onerror = (e) => {
-        console.error("Speech error:", e);
-        clearInterval(resumeInfinity);
-        resumeIntervalRef.current = null;
-        setIsSpeaking(false);
-        setListening(false);
-        setStatusMessage("Speaking error. Tap mic to continue.");
-        currentUtteranceRef.current = null;
-      };
-
-      console.log("🔊 Speaking AI response");
-      window.speechSynthesis.speak(utterance);
+      // Wait for voices to load on mobile
+      if (window.speechSynthesis.getVoices().length > 0) {
+        speak();
+      } else {
+        window.speechSynthesis.onvoiceschanged = () => {
+          speak();
+        };
+      }
     } catch (err) {
       console.error("TTS error:", err);
+      setStatusMessage("Speaking error. Tap mic to continue.");
     }
   };
 
@@ -370,6 +348,7 @@ const CallingInterface = () => {
                 disabled={isListening || isGreeting || isSpeaking}
                 onClick={() => {
                   if (!isListening && !isGreeting && !isSpeaking) {
+                    unlockTTS();
                     startListening();
                   }
                 }}
