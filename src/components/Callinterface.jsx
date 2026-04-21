@@ -44,6 +44,86 @@ const CallingInterface = () => {
     setListening(false);
   };
 
+  // PART 3 — Speech Synthesis with mobile voice loading + Chrome 15-second fix
+  const speakResponse = (text) => {
+    try {
+      window.speechSynthesis.cancel();
+
+      const speak = () => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-IN";
+        utterance.rate = 0.95;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        // Pick best available voice
+        const voices = window.speechSynthesis.getVoices();
+        const preferred =
+          voices.find((v) => v.lang.includes("en") && v.localService === true) ||
+          voices.find((v) => v.lang.includes("en")) ||
+          voices[0];
+        if (preferred) utterance.voice = preferred;
+
+        setStatusMessage("🔊 Speaking...");
+        setListening(true); // mic off during AI speech
+        setIsSpeaking(true);
+        currentUtteranceRef.current = utterance;
+
+        // Chrome mobile 15 second bug fix
+        const resumeInfinity = setInterval(() => {
+          if (!window.speechSynthesis.speaking) {
+            clearInterval(resumeInfinity);
+          } else {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+          }
+        }, 10000);
+        resumeIntervalRef.current = resumeInfinity;
+
+        utterance.onstart = () => {
+          console.log("🔊 Speech started");
+          setIsSpeaking(true);
+        };
+
+        utterance.onend = () => {
+          console.log("✅ AI response speech completed");
+          clearInterval(resumeInfinity);
+          resumeIntervalRef.current = null;
+          setIsSpeaking(false);
+          setListening(false);
+          setStatusMessage("Tap mic to speak.");
+          currentUtteranceRef.current = null;
+          startListening();
+        };
+
+        utterance.onerror = (e) => {
+          clearInterval(resumeInfinity);
+          resumeIntervalRef.current = null;
+          console.error("Speech error:", e);
+          setIsSpeaking(false);
+          setListening(false);
+          setStatusMessage("Tap mic to continue.");
+          currentUtteranceRef.current = null;
+        };
+
+        console.log("🔊 Speaking AI response");
+        window.speechSynthesis.speak(utterance);
+      };
+
+      // Wait for voices to load on mobile
+      if (window.speechSynthesis.getVoices().length > 0) {
+        speak();
+      } else {
+        window.speechSynthesis.onvoiceschanged = () => {
+          speak();
+        };
+      }
+    } catch (err) {
+      console.error("TTS error:", err);
+      setStatusMessage("Speaking error. Tap mic to continue.");
+    }
+  };
+
   // PART 4 — Mic permission on page load (no auto-start for mobile autoplay policy)
   useEffect(() => {
     console.log("🚀 Callinterface: Component mounted");
@@ -58,7 +138,10 @@ const CallingInterface = () => {
       .then(() => {
         setIsGreeting(false);
         setStatusMessage("Tap mic to start speaking.");
-        // DO NOT auto-start listening here on mobile
+        // Play greeting
+        setTimeout(() => {
+          speakResponse("Hello! I am Abhay's AI assistant. You can ask me anything about Abhay's skills, projects, or experience. Tap the mic and speak!");
+        }, 500);
       })
       .catch(() => {
         setStatusMessage(
@@ -174,85 +257,6 @@ const CallingInterface = () => {
     currentUtteranceRef.current = null;
   };
 
-  // PART 3 — Speech Synthesis with mobile voice loading + Chrome 15-second fix
-  const speakResponse = (text) => {
-    try {
-      window.speechSynthesis.cancel();
-
-      const speak = () => {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "en-IN";
-        utterance.rate = 0.95;
-        utterance.pitch = 1;
-        utterance.volume = 1;
-
-        // Pick best available voice
-        const voices = window.speechSynthesis.getVoices();
-        const preferred =
-          voices.find((v) => v.lang.includes("en") && v.localService === true) ||
-          voices.find((v) => v.lang.includes("en")) ||
-          voices[0];
-        if (preferred) utterance.voice = preferred;
-
-        setStatusMessage("🔊 Speaking...");
-        setListening(true); // mic off during AI speech
-        setIsSpeaking(true);
-        currentUtteranceRef.current = utterance;
-
-        // Chrome mobile 15 second bug fix
-        const resumeInfinity = setInterval(() => {
-          if (!window.speechSynthesis.speaking) {
-            clearInterval(resumeInfinity);
-          } else {
-            window.speechSynthesis.pause();
-            window.speechSynthesis.resume();
-          }
-        }, 10000);
-        resumeIntervalRef.current = resumeInfinity;
-
-        utterance.onstart = () => {
-          console.log("🔊 Speech started");
-          setIsSpeaking(true);
-        };
-
-        utterance.onend = () => {
-          console.log("✅ AI response speech completed");
-          clearInterval(resumeInfinity);
-          resumeIntervalRef.current = null;
-          setIsSpeaking(false);
-          setListening(false);
-          setStatusMessage("Tap mic to speak.");
-          currentUtteranceRef.current = null;
-          startListening();
-        };
-
-        utterance.onerror = (e) => {
-          clearInterval(resumeInfinity);
-          resumeIntervalRef.current = null;
-          console.error("Speech error:", e);
-          setIsSpeaking(false);
-          setListening(false);
-          setStatusMessage("Tap mic to continue.");
-          currentUtteranceRef.current = null;
-        };
-
-        console.log("🔊 Speaking AI response");
-        window.speechSynthesis.speak(utterance);
-      };
-
-      // Wait for voices to load on mobile
-      if (window.speechSynthesis.getVoices().length > 0) {
-        speak();
-      } else {
-        window.speechSynthesis.onvoiceschanged = () => {
-          speak();
-        };
-      }
-    } catch (err) {
-      console.error("TTS error:", err);
-      setStatusMessage("Speaking error. Tap mic to continue.");
-    }
-  };
 
   const handleclick = () => {
     setSpeaker((prev) => !prev);
@@ -352,16 +356,16 @@ const CallingInterface = () => {
                     startListening();
                   }
                 }}
-                className={`w-14 h-14 rounded-full flex items-center justify-center ${
+                className={`w-14 h-14 rounded-full flex items-center justify-center bg-[#1a3a3a] ${
                   isListening || isGreeting || isSpeaking
                     ? "opacity-50 cursor-not-allowed"
-                    : ""
+                    : "hover:bg-[#1a4a4a]"
                 }`}
               >
                 {isListening ? (
-                  <RiSpeakFill className="bg-[#0d131f] text-white text-2xl" />
+                  <RiSpeakFill className="text-[#87cfd5] text-2xl" />
                 ) : (
-                  <FaMicrophone className="bg-[#0d131f] text-white text-2xl" />
+                  <FaMicrophone className="text-white text-2xl" />
                 )}
               </button>
             </div>
